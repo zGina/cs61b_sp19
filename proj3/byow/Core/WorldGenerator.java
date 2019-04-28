@@ -1,6 +1,5 @@
 package byow.Core;
 
-import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.util.LinkedList;
@@ -12,11 +11,11 @@ import java.util.Random;
  * Create a random world with rooms connected by hallways.
  */
 public class WorldGenerator {
-    
+
     public static void createWorld(TETile[][] world, Random random) {
         setWorldBackgroundAsWalls(world); // Fill whole world with wall tiles.
         Queue<Room> rooms = placeRoomsToWorld(world, random); // Carve rooms at random place.
-        connectRoomsInWorld(world, rooms, random); // Connect rooms with floor tile hallways with no walls.
+        connectRoomsInWorld(world, rooms, random); // Connect rooms with hallways has no walls.
         removeRedundantWalls(world); // Cleverly make hallways have walls.
     }
 
@@ -30,8 +29,10 @@ public class WorldGenerator {
             Room roomB = toBeConnected.poll();
 
             // Calculate center position of each room.
-            Position roomACentre = new Position(roomA.pos.x + (roomA.width / 2), roomA.pos.y + (roomA.height / 2));
-            Position roomBCentre = new Position(roomB.pos.x + (roomB.width / 2), roomB.pos.y + (roomB.height / 2));
+            Position roomACentre = new Position(roomA.pos.x + (roomA.width / 2),
+                    roomA.pos.y + (roomA.height / 2));
+            Position roomBCentre = new Position(roomB.pos.x + (roomB.width / 2),
+                    roomB.pos.y + (roomB.height / 2));
 
             // Choose left room's x position as horizontal hallway's start x position.
             // Choose lower room's y position as horizontal hallway's start y position.
@@ -57,6 +58,7 @@ public class WorldGenerator {
             // thus guaranteeing already connected rooms can be connected to other rooms.
             int i = random.nextInt(2);
             switch (i) {
+                default:
                 case 0:
                     rooms.offer(roomA);
                     break;
@@ -169,7 +171,9 @@ public class WorldGenerator {
     // If a wall's all eight neighbours are walls, it is redundant.
     // Cleverly make hallways have walls.
     private static void removeRedundantWalls(TETile[][] world) {
-        int[][] neighbours = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+        int[][] neighbours = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0},
+                {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
         for (int x = 0; x < world.length; x += 1) {
             for (int y = 0; y < world[0].length; y += 1) {
                 if (world[x][y].equals(Tileset.WALL)) {
@@ -196,17 +200,6 @@ public class WorldGenerator {
     }
 
     public static void main(String[] args) {
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-//        TERenderer ter = new TERenderer();
-//        ter.initialize(100, 50);
-//        TETile[][] world = new TETile[100][50];
-//        Random random = RANDOM;
-//        addHorzHallwayToWorld(world, 10, new Position(7, 1));
-//        addVertHallway(world, 10, new Position(23, 1));
-//        Room r = new Room(5, 7, new Position(3, 4), new Position(7, 10));
-//        addRoom(world, r);
-//        createWorld(world, random);
-//        ter.renderFrame(world);
         Engine engine = new Engine();
         engine.interactWithInputString(args[0]);
     }

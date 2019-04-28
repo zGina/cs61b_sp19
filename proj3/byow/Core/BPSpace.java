@@ -56,10 +56,12 @@ public class BPSpace {
 
         if (horizontal) {
             leftChild = new BPSpace(pos, width, split); // Bottom child.
-            rightChild = new BPSpace(new Position(pos.x, pos.y + split), width, height - split); // Top child.
+            rightChild = new BPSpace(new Position(pos.x, pos.y + split),
+                    width, height - split); // Top child.
         } else {
             leftChild = new BPSpace(pos, split, height);
-            rightChild = new BPSpace(new Position(pos.x + split, pos.y), width - split, height);
+            rightChild = new BPSpace(new Position(pos.x + split, pos.y),
+                    width - split, height);
         }
         return true;
     }
