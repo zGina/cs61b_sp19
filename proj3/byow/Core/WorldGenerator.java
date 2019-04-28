@@ -30,9 +30,9 @@ public class WorldGenerator {
 
             // Calculate center position of each room.
             Position roomACentre = new Position(roomA.pos.x + (roomA.width / 2),
-                    roomA.pos.y + (roomA.height / 2));
+                                                roomA.pos.y + (roomA.height / 2));
             Position roomBCentre = new Position(roomB.pos.x + (roomB.width / 2),
-                    roomB.pos.y + (roomB.height / 2));
+                                                roomB.pos.y + (roomB.height / 2));
 
             // Choose left room's x position as horizontal hallway's start x position.
             // Choose lower room's y position as horizontal hallway's start y position.
@@ -172,7 +172,7 @@ public class WorldGenerator {
     // Cleverly make hallways have walls.
     private static void removeRedundantWalls(TETile[][] world) {
         int[][] neighbours = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0},
-                {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+                                         {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
         for (int x = 0; x < world.length; x += 1) {
             for (int y = 0; y < world[0].length; y += 1) {
