@@ -9,11 +9,12 @@ public class BPSpace {
 
     private static final int MIN_SIZE = 7;
 
-    public int width, height;
-    public Position pos; // Bottom left position.
-    public BPSpace leftChild;
-    public BPSpace rightChild;
-    public Room room;
+    private int width;
+    private int height;
+    Position pos; // Bottom left position.
+    BPSpace leftChild;
+    BPSpace rightChild;
+    Room room;
 
     public BPSpace(Position pos, int width, int height) {
         this.pos = pos;
@@ -67,7 +68,8 @@ public class BPSpace {
     }
 
     public void buildRoom(Random random) {
-        // If current area has child areas, then we cannot build room in it, go to check its children.
+        // If current area has child areas, then we cannot build room in it,
+        // instead, go to check its children.
         if (leftChild != null) {
             leftChild.buildRoom(random);
             rightChild.buildRoom(random);
