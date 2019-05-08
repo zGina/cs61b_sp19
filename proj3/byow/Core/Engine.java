@@ -67,8 +67,10 @@ public class Engine {
             char nextAction = source.getNextKey();
             if (nextAction == 'Q') {
                 record.deleteCharAt(record.length() - 1); // Remove ':' from record.
-                save(record.toString());
-                System.exit(0);
+                save(record.toString()); // Save current world state to the file.
+                if (source.getClass().equals(KeyboardInputSource.class)) {
+                    System.exit(0);
+                }
             }
 
         } else if (action == 'L') { // Load saved world.
@@ -76,10 +78,11 @@ public class Engine {
             String savedRecord = load();
             if (savedRecord.equals("")) {
                 System.exit(0); // Exit if no saved data.
-            }
-            world = interactWithInputString(savedRecord); // Load saved world.
-            if (source.getClass().equals(KeyboardInputSource.class)) {
-                ter.renderFrame(world);
+            } else {
+                world = interactWithInputString(savedRecord); // Load saved world.
+                if (source.getClass().equals(KeyboardInputSource.class)) {
+                    ter.renderFrame(world);
+                }
             }
 
         } else if (action == 'W') { // Move avatar upwards if there is no wall.
