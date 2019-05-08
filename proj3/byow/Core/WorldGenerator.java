@@ -32,7 +32,8 @@ public class WorldGenerator {
 
         int i = random.nextInt(birthPlaces.size());
         Room birthRoom = birthPlaces.get(i);
-        int avatarX = birthRoom.pos.x + 1 + random.nextInt(birthRoom.width - 2); // Make sure avatar not in wall.
+        // Make sure that avatar does not born in wall.
+        int avatarX = birthRoom.pos.x + 1 + random.nextInt(birthRoom.width - 2);
         int avatarY = birthRoom.pos.y + 1 + random.nextInt(birthRoom.height - 2);
         world[avatarX][avatarY] = Tileset.AVATAR;
 
@@ -43,7 +44,8 @@ public class WorldGenerator {
     // Note that hallway is built either from left or from bottom.
     private static void connectRoomsInWorld(TETile[][] world, Queue<Room> rooms, Random random) {
         Queue<Room> toBeConnected = new LinkedList<>();
-        for (Room room : rooms) { // If set toBeConnected = rooms directly, rooms will also be altered after loop.
+        // If set toBeConnected = rooms directly, rooms will also be altered after following loop.
+        for (Room room : rooms) {
             toBeConnected.offer(room);
         }
 

@@ -23,7 +23,6 @@ public class Engine {
     private static final int TILE_SIZE = 16;
 
     private TETile[][] world = new TETile[WIDTH][HEIGHT];
-    private long seed = 0L;
     private StringBuilder record = new StringBuilder();
     private Position avatarPos = new Position(0, 0);
 
@@ -53,16 +52,15 @@ public class Engine {
         record.append(action);
         // Create a new world.
         if (action == 'N') {
-            seed = inputSeed(source);
+            long seed = inputSeed(source);
             record.append(seed);
             record.append('S');
-
             Random random = new Random(seed);
             avatarPos = WorldGenerator.createWorld(world, random);
-            if (source.getClass().equals(KeyboardInputSource.class)) { // If interacts with string, do not render.
+            // If interacts with string, do not render.
+            if (source.getClass().equals(KeyboardInputSource.class)) {
                 ter.renderFrame(world);
             }
-
         } else if (action == ':') { // Save and Quit.
             char nextAction = source.getNextKey();
             if (nextAction == 'Q') {
@@ -72,7 +70,6 @@ public class Engine {
                     System.exit(0);
                 }
             }
-
         } else if (action == 'L') { // Load saved world.
             record.deleteCharAt(record.length() - 1); // Remove 'L' from the record.
             String savedRecord = load();
@@ -84,7 +81,6 @@ public class Engine {
                     ter.renderFrame(world);
                 }
             }
-
         } else if (action == 'W') { // Move avatar upwards if there is no wall.
             int x = avatarPos.x;
             int y = avatarPos.y + 1;
@@ -96,7 +92,6 @@ public class Engine {
                     ter.renderFrame(world);
                 }
             }
-
         } else if (action == 'A') { // Move avatar to left if there is no wall.
             int x = avatarPos.x - 1;
             int y = avatarPos.y;
@@ -108,7 +103,6 @@ public class Engine {
                     ter.renderFrame(world);
                 }
             }
-
         } else if (action == 'S') { // Move avatar downwards if there is no wall.
             int x = avatarPos.x;
             int y = avatarPos.y - 1;
@@ -120,7 +114,6 @@ public class Engine {
                     ter.renderFrame(world);
                 }
             }
-
         } else if (action == 'D') { // Move avatar to right if there is no wall.
             int x = avatarPos.x + 1;
             int y = avatarPos.y;
@@ -187,13 +180,11 @@ public class Engine {
     // Draw the start menu when player interacts with keyboard.
     private void drawStartMenu() {
         StdDraw.clear(StdDraw.BLACK);
-
         // Draw title.
         Font font = new Font("Monaco", Font.BOLD, 60);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
         StdDraw.text(WIDTH / 2, HEIGHT * 3 / 4, "CS61B: Project 3");
-
         // Draw menu options.
         font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
@@ -201,11 +192,9 @@ public class Engine {
         StdDraw.text(WIDTH / 2, HEIGHT * 5 / 10, "New World (N)");
         StdDraw.text(WIDTH / 2, HEIGHT * 4 / 10, "Load World (L)");
         StdDraw.text(WIDTH / 2, HEIGHT * 3 / 10, "Quit (Q)");
-
         // Reset font size to TeRenderer's default size.
         font = new Font("Monaco", Font.BOLD, TILE_SIZE - 2);
         StdDraw.setFont(font);
-
         StdDraw.show();
     }
 
@@ -215,7 +204,6 @@ public class Engine {
         if (source.getClass().equals(KeyboardInputSource.class)) {
             drawSeed("");
         }
-
         // Display seed typed in.
         StringBuilder seedRecord = new StringBuilder();
         long seed = 0L;
@@ -238,20 +226,16 @@ public class Engine {
     // Display the seed typed by the player when interact with keyboard.
     private void drawSeed(String s) {
         StdDraw.clear(StdDraw.BLACK);
-
         // Draw instruction.
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
         StdDraw.text(WIDTH / 2, HEIGHT * 6 / 10, "Please type a seed, press 'S' to confirm");
-
         // Display seed typed.
         StdDraw.text(WIDTH / 2, HEIGHT * 5 / 10, s);
-
         // Reset font size to TeRenderer's default size.
         font = new Font("Monaco", Font.BOLD, TILE_SIZE - 2);
         StdDraw.setFont(font);
-
         StdDraw.show();
     }
 
@@ -285,7 +269,6 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
         InputSource source = new StringInputSource(input);
-
         while (source.possibleNextInput()) {
             char action = source.getNextKey();
             takeAction(source, action);
