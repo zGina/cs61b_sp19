@@ -7,6 +7,13 @@ import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.Random;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -17,9 +24,8 @@ public class Engine {
 
     private TETile[][] world = new TETile[WIDTH][HEIGHT];
     private long seed = 0L;
-    private StringBuilder save = new StringBuilder();
+    private StringBuilder record = new StringBuilder();
     private Position avatarPos = new Position(0, 0);
-    private boolean gameOver = false;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -27,10 +33,11 @@ public class Engine {
      */
     public void interactWithKeyboard() {
         InputSource source = new KeyboardInputSource();
+        boolean gameOver = false;
         ter.initialize(WIDTH, HEIGHT);
         drawStartMenu();
         while (!gameOver) {
-            if (save.length() > 0 && save.charAt(save.length() - 1) != 'Q') { // Make mouse display be real-time.
+            if (record.length() > 0) { // Make mouse display be real-time.
                 ter.renderFrame(world);
                 tileInfo(new Position((int) StdDraw.mouseX(), (int) StdDraw.mouseY()));
             }
@@ -43,12 +50,12 @@ public class Engine {
 
     // Take the action based on input source type.
     private void takeAction(InputSource source, char action) {
-        save.append(action);
+        record.append(action);
         // Create a new world.
         if (action == 'N') {
             seed = inputSeed(source);
-            save.append(seed);
-            save.append('S');
+            record.append(seed);
+            record.append('S');
 
             Random random = new Random(seed);
             avatarPos = WorldGenerator.createWorld(world, random);
@@ -59,15 +66,18 @@ public class Engine {
         } else if (action == ':') { // Save and Quit.
             char nextAction = source.getNextKey();
             if (nextAction == 'Q') {
-                save.append(nextAction);
-                if (source.getClass().equals(KeyboardInputSource.class)) { // If with keyboard, return to start menu.
-                    drawStartMenu();
-                }
+                record.deleteCharAt(record.length() - 1); // Remove ':' from record.
+                save(record.toString());
+                System.exit(0);
             }
 
         } else if (action == 'L') { // Load saved world.
-            save.deleteCharAt(save.length() - 1); // Remove 'L' from the record.
-            world = interactWithInputString(save.toString());
+            record.deleteCharAt(record.length() - 1); // Remove 'L' from the record.
+            String savedRecord = load();
+            if (savedRecord.equals("")) {
+                System.exit(0); // Exit if no saved data.
+            }
+            world = interactWithInputString(savedRecord); // Load saved world.
             if (source.getClass().equals(KeyboardInputSource.class)) {
                 ter.renderFrame(world);
             }
@@ -120,6 +130,48 @@ public class Engine {
                 }
             }
         }
+    }
+
+    // Save data to a file.
+    private static void save(String record) {
+        File f = new File("./save_data.txt");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(record);
+        } catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        }
+    }
+
+    // Load data from a file.
+    private static String load() {
+        File f = new File("./save_data.txt");
+        if (f.exists()) {
+            try {
+                FileInputStream fs = new FileInputStream(f);
+                ObjectInputStream os = new ObjectInputStream(fs);
+                return (String) os.readObject();
+            } catch (FileNotFoundException e) {
+                System.out.println("file not found");
+                System.exit(0);
+            } catch (IOException e) {
+                System.out.println(e);
+                System.exit(0);
+            } catch (ClassNotFoundException e) {
+                System.out.println("class not found");
+                System.exit(0);
+            }
+        }
+        // In the case no file has been saved yet, we return an empty string.
+        return "";
     }
 
     // Display the description of the tile pointed by mouse.

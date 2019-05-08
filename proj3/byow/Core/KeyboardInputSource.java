@@ -2,7 +2,7 @@ package byow.Core;
 
 import edu.princeton.cs.introcs.StdDraw;
 
-public class KeyboardInputSource implements InputSource{
+public class KeyboardInputSource implements InputSource {
 
     public KeyboardInputSource() {
     }
