@@ -3,6 +3,7 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -12,19 +13,41 @@ import java.util.Random;
  */
 public class WorldGenerator {
 
-    public static void createWorld(TETile[][] world, Random random) {
+    // Create a world, return the position of avatar's birthplace
+    public static Position createWorld(TETile[][] world, Random random) {
         setWorldBackgroundAsWalls(world); // Fill whole world with wall tiles.
         Queue<Room> rooms = placeRoomsToWorld(world, random); // Carve rooms at random place.
         connectRoomsInWorld(world, rooms, random); // Connect rooms with hallways has no walls.
         removeRedundantWalls(world); // Cleverly make hallways have walls.
+        return addAvatar(world, rooms, random); // Add an avatar to the world.
+    }
+
+    // Add an avatar to the world, within a random room.
+    // Return position of the avatar.
+    private static Position addAvatar(TETile[][] world, Queue<Room> rooms, Random random) {
+        List<Room> birthPlaces = new ArrayList<>();
+        for (Room room : rooms) {
+            birthPlaces.add(room);
+        }
+
+        int i = random.nextInt(birthPlaces.size());
+        Room birthRoom = birthPlaces.get(i);
+        int avatarX = birthRoom.pos.x + 1 + random.nextInt(birthRoom.width - 2); // Make sure avatar not in wall.
+        int avatarY = birthRoom.pos.y + 1 + random.nextInt(birthRoom.height - 2);
+        world[avatarX][avatarY] = Tileset.AVATAR;
+
+        return new Position(avatarX, avatarY);
     }
 
     // Connect rooms using floor tile hallways with no walls.
     // Note that hallway is built either from left or from bottom.
     private static void connectRoomsInWorld(TETile[][] world, Queue<Room> rooms, Random random) {
-        Queue<Room> toBeConnected = rooms;
+        Queue<Room> toBeConnected = new LinkedList<>();
+        for (Room room : rooms) { // If set toBeConnected = rooms directly, rooms will also be altered after loop.
+            toBeConnected.offer(room);
+        }
 
-        while (rooms.size() > 1) { // Make sure that all rooms are connected.
+        while (toBeConnected.size() > 1) { // Make sure that all rooms are connected.
             Room roomA = toBeConnected.poll();
             Room roomB = toBeConnected.poll();
 
@@ -60,10 +83,10 @@ public class WorldGenerator {
             switch (i) {
                 default:
                 case 0:
-                    rooms.offer(roomA);
+                    toBeConnected.offer(roomA);
                     break;
                 case 1:
-                    rooms.offer(roomB);
+                    toBeConnected.offer(roomB);
                     break;
             }
         }
@@ -75,12 +98,12 @@ public class WorldGenerator {
         List<BPSpace> space = new LinkedList<>();
         Queue<BPSpace> queue = new LinkedList<>();
         Queue<Room> rooms = new LinkedList<>();
-        BPSpace root = new BPSpace(new Position(0, 0), world.length, world[0].length);
-
+        // height is less than world actual height, save place for HUD.
+        BPSpace root = new BPSpace(new Position(0, 0), world.length, world[0].length - 1);
         space.add(root);
         queue.offer(root);
 
-        int num = 15; // A suitable number.
+        int num = 15 + random.nextInt(10); // A suitable number.
         while (num > 0 && !queue.isEmpty()) {
             BPSpace toPartition = queue.poll();
             if (toPartition.partition(random)) {
@@ -197,10 +220,5 @@ public class WorldGenerator {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        Engine engine = new Engine();
-        engine.interactWithInputString(args[0]);
     }
 }

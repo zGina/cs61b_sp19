@@ -1,6 +1,6 @@
 package byow.Core;
 
-public interface InputDevice {
+public interface InputSource {
     char getNextKey();
     boolean possibleNextInput();
 }

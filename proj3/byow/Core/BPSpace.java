@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class BPSpace {
 
-    private static final int MIN_SIZE = 7;
+    private static final int MIN_SIZE = 6;
 
     private int width;
     private int height;
