@@ -81,11 +81,9 @@ public class UnionFind {
             root = parent(root);
         }
         // path-compression
-        int currParent;
         while (vertex != root) {
-            currParent = parent(vertex);
             intSets[vertex] = root;
-            vertex = currParent;
+            vertex = parent(vertex);
         }
         return root;
     }

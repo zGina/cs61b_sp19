@@ -92,7 +92,7 @@ public class BubbleGrid {
 
     // Turn (row, col) to uf index.
     private int xyTo1D(int row, int col) {
-        return row * rowNum + col + 1;
+        return row * colNum+ col ;
     }
 
 
